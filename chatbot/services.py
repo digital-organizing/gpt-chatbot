@@ -62,20 +62,28 @@ def index_realm(slug: str):
 
     texts = Text.objects.filter(realm=realm)
 
+    if not collection_exists(realm.slug):
+        create_collection(realm.slug, realm.embedding_dim)
+
     ids, contents = [], []
 
     for text in texts.iterator():
         ids.append(text.pk)
         contents.append(text.content)
+        if len(ids) < 10_000:
+            continue
+        print("Inserting 10_000 elements.")
+        embeddings = batch_embedding(contents, realm.openai_key, realm.embedding_model, realm.slug)
+        insert_embeddings_into(ids, embeddings, realm.slug)
+        ids, contents = [], []
 
     embeddings = batch_embedding(contents, realm.openai_key, realm.embedding_model, realm.slug)
-
-    if not collection_exists(realm.slug):
-        create_collection(realm.slug, realm.embedding_dim)
-
     insert_embeddings_into(ids, embeddings, realm.slug)
+
+    print("Building index.")
     build_index(realm.slug)
 
+    print("Marking texts as indexed.")
     Text.objects.filter(id__in=ids).update(indexed=True)
 
 
