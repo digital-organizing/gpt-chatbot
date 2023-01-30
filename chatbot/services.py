@@ -1,6 +1,6 @@
 """Functions implementing the functionality of the chatbots."""
-from django.conf import settings
 from django.db.models.query import QuerySet
+from tqdm import tqdm
 
 from chatbot.collections import (
     build_index,
@@ -60,14 +60,14 @@ def index_realm(slug: str):
     """Create embedding for each text in the realm and add it to the milvus index."""
     realm = Realm.objects.get(slug=slug)
 
-    texts = Text.objects.filter(realm=realm)
+    texts = Text.objects.filter(realm=realm, indexed=False)
 
     if not collection_exists(realm.slug):
         create_collection(realm.slug, realm.embedding_dim)
 
     ids, contents = [], []
 
-    for text in texts.iterator():
+    for text in tqdm(texts.iterator(), total=texts.count()):
         ids.append(text.pk)
         contents.append(text.content)
         if len(ids) < 10_000:
@@ -75,6 +75,7 @@ def index_realm(slug: str):
         print("Inserting 10_000 elements.")
         embeddings = batch_embedding(contents, realm.openai_key, realm.embedding_model, realm.slug)
         insert_embeddings_into(ids, embeddings, realm.slug)
+        Text.objects.filter(id__in=ids).update(indexed=True)
         ids, contents = [], []
 
     embeddings = batch_embedding(contents, realm.openai_key, realm.embedding_model, realm.slug)
@@ -82,9 +83,6 @@ def index_realm(slug: str):
 
     print("Building index.")
     build_index(realm.slug)
-
-    print("Marking texts as indexed.")
-    Text.objects.filter(id__in=ids).update(indexed=True)
 
 
 def reset_index(slug: str):

@@ -29,7 +29,7 @@ def single_embedding(text: str, openai_key: str, embedding_model: str, user: str
     return np.array(response['data'][0]['embedding'])
 
 
-def _chunk_text(texts: List[str], max_tokens=8192) -> List[List[str]]:
+def _chunk_text(texts: List[str], max_tokens=6000) -> List[List[str]]:
     """Generate a list of lists where each inner list contains texts that together are shorter than max_tokens."""
     chunks: List[List[str]] = [[]]
     current_length = 0
