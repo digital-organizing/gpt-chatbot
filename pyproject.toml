@@ -12,6 +12,7 @@ dependencies = [
     "django-stubs-ext",
     "django-storages",
     "boto3",
+    "gunicorn",
     "more-itertools",
     "pymilvus",
     "openai",
