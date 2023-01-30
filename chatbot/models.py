@@ -73,6 +73,8 @@ class Question(models.Model):
     answer = models.TextField()
     context = models.ManyToManyField(Text, blank=True)
 
+    prompt = models.TextField(blank=True)
+
     bot = models.ForeignKey(Chatbot, models.CASCADE)
     user = models.ForeignKey(get_user_model(), models.SET_NULL, blank=True, null=True)
 

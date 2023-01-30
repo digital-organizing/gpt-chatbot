@@ -44,7 +44,7 @@ def _format_context(texts: QuerySet[Text], max_tokens: int):
     return result
 
 
-def generate_answer(question: str, texts: QuerySet[Text], chatbot: Chatbot):
+def generate_prompt(question: str, texts: QuerySet[Text], chatbot: Chatbot):
     """Generate an answer to the question using the texts and the configuration of the chatbot."""
     prompt_length = count_tokens(chatbot.prompt_template) + count_tokens(question)
 
@@ -53,7 +53,7 @@ def generate_answer(question: str, texts: QuerySet[Text], chatbot: Chatbot):
         context=_format_context(texts, chatbot.model_max_tokens - prompt_length - chatbot.max_tokens),
     )
 
-    return generate_completion(prompt, chatbot)
+    return prompt
 
 
 def index_realm(slug: str):
@@ -93,7 +93,7 @@ def reset_index(slug: str):
     drop_collection(realm.slug)
 
 
-def store_question(question, answer, texts, chatbot):
+def store_question(question, answer, prompt, texts, chatbot):
     """Create a new question in the database."""
-    question = Question.objects.create(question=question, answer=answer, bot=chatbot)
+    question = Question.objects.create(question=question, answer=answer, bot=chatbot, prompt=prompt)
     question.context.set(texts)

@@ -8,8 +8,9 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django_ratelimit.decorators import ratelimit
 
+from chatbot.completion import generate_completion
 from chatbot.models import Chatbot
-from chatbot.services import find_texts, generate_answer, store_question
+from chatbot.services import find_texts, generate_prompt, store_question
 from core import rates
 
 # Create your views here.
@@ -36,9 +37,11 @@ def bot_endpoint(request: HttpRequest, slug: str):
 
     texts = find_texts(question, chatbot.realm)
 
-    answer = generate_answer(question, texts, chatbot)
+    prompt = generate_prompt(question, texts, chatbot)
 
-    store_question(question, answer, texts, chatbot)
+    answer = generate_completion(prompt, chatbot)
+
+    store_question(question, answer, prompt, texts, chatbot)
 
     return JsonResponse({
         'answer': answer,
