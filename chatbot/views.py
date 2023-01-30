@@ -44,6 +44,12 @@ def bot_endpoint(request: HttpRequest, slug: str):
     store_question(question, answer, prompt, texts, chatbot)
 
     return JsonResponse({
-        'answer': answer,
-        'texts': list(texts.filter(internal=False).values('id', 'content', 'url', 'page')),
+        'answer':
+        answer,
+        'texts': [{
+            'id': text.id,
+            'content': text.content,
+            'url': text.url,
+            'page': text.page,
+        } for text in texts if not text.internal],
     })

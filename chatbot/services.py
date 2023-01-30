@@ -1,5 +1,6 @@
 """Functions implementing the functionality of the chatbots."""
-from django.db.models.query import QuerySet
+from typing import List
+
 from tqdm import tqdm
 
 from chatbot.collections import (
@@ -10,12 +11,11 @@ from chatbot.collections import (
     insert_embeddings_into,
     search_in_collection,
 )
-from chatbot.completion import generate_completion
 from chatbot.embeddings import batch_embedding, count_tokens, single_embedding
 from chatbot.models import Chatbot, Question, Realm, Text
 
 
-def find_texts(question: str, realm: Realm) -> QuerySet[Text]:
+def find_texts(question: str, realm: Realm) -> List[Text]:
     """Find texts realted to the question."""
     question_embedding = single_embedding(
         question,
@@ -24,13 +24,16 @@ def find_texts(question: str, realm: Realm) -> QuerySet[Text]:
         realm.slug,
     )
 
-    text_ids = search_in_collection(question_embedding, realm.slug).ids
+    result = search_in_collection(question_embedding, realm.slug, n=20)
+    text_ids = result.ids
+    distances = result.distances
 
-    texts = Text.objects.filter(id__in=text_ids)
+    texts = [text for _, text in sorted(zip(distances, Text.objects.filter(id__in=text_ids)), key=lambda a: a[0])]
+
     return texts
 
 
-def _format_context(texts: QuerySet[Text], max_tokens: int):
+def _format_context(texts: List[Text], max_tokens: int):
     result = ''
 
     for text in texts:
@@ -44,7 +47,7 @@ def _format_context(texts: QuerySet[Text], max_tokens: int):
     return result
 
 
-def generate_prompt(question: str, texts: QuerySet[Text], chatbot: Chatbot):
+def generate_prompt(question: str, texts: List[Text], chatbot: Chatbot):
     """Generate an answer to the question using the texts and the configuration of the chatbot."""
     prompt_length = count_tokens(chatbot.prompt_template) + count_tokens(question)
 
