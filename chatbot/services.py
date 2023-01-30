@@ -25,6 +25,7 @@ def find_texts(question: str, realm: Realm) -> List[Text]:
     )
 
     result = search_in_collection(question_embedding, realm.slug, n=20)
+
     text_ids = result.ids
     distances = result.distances
 

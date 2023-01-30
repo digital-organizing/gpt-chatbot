@@ -221,6 +221,8 @@ tqdm==4.64.1
     #   huggingface-hub
     #   openai
     #   transformers
+tqdm-stubs==0.2.1
+    # via mv-mietzinsrechner-api (pyproject.toml)
 transformers==4.26.0
     # via mv-mietzinsrechner-api (pyproject.toml)
 types-cachetools==5.2.1

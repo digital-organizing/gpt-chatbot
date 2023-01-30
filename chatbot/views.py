@@ -1,5 +1,4 @@
 """Views to access the chabot functionality."""
-import json
 
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponseBadRequest, JsonResponse
@@ -12,8 +11,6 @@ from chatbot.completion import generate_completion
 from chatbot.models import Chatbot
 from chatbot.services import find_texts, generate_prompt, store_question
 from core import rates
-
-# Create your views here.
 
 
 @ratelimit(key='user_or_ip', rate=rates.get_ratelimit)
@@ -34,7 +31,6 @@ def bot_endpoint(request: HttpRequest, slug: str):
 
     if question is None:
         return HttpResponseBadRequest("You need to provide a question.")
-
     texts = find_texts(question, chatbot.realm)
 
     prompt = generate_prompt(question, texts, chatbot)
@@ -43,13 +39,14 @@ def bot_endpoint(request: HttpRequest, slug: str):
 
     store_question(question, answer, prompt, texts, chatbot)
 
+    text_list = [{
+        'id': text.id,
+        'content': text.content,
+        'url': text.url,
+        'page': text.page,
+    } for text in texts if not text.internal]
+
     return JsonResponse({
-        'answer':
-        answer,
-        'texts': [{
-            'id': text.id,
-            'content': text.content,
-            'url': text.url,
-            'page': text.page,
-        } for text in texts if not text.internal],
+        'answer': answer,
+        'texts': text_list,
     })

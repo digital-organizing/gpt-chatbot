@@ -1,12 +1,10 @@
 """Methods for working with milvius database."""
-from typing import List
 
 from pymilvus import (
     Collection,
     CollectionSchema,
     DataType,
     FieldSchema,
-    SearchResult,
     utility,
 )
 
