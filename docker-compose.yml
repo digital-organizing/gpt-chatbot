@@ -1,0 +1,123 @@
+version: "3.7"
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/home/app/web/
+      - static:/static
+      - media:/media
+    ports:
+      - 8000:8000
+    environment: &django-env
+      - DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$SQL_HOST/$POSTGRES_DB
+      - DEBUG=$DEBUG
+      - SECRET_KEY=$SECRET_KEY
+      - TIME_ZONE=$TIME_ZONE
+      - LANGUAGE_CODE=$LANGUAGE_CODE
+      - CACHE_URL=$CACHE_URL
+      - REDIS_HOST=$REDIS_HOST
+      - EMAIL_URL=$EMAIL_URL
+      - SQL_HOST=$SQL_HOST
+      - SQL_PORT=$SQL_PORT
+      - OPENAI_API_KEY=$OPENAI_API_KEY
+      - S3_ACCESS_KEY_ID=$S3_ACCESS_KEY_ID
+      - S3_SECRET_ACCESS_KEY=$S3_SECRET_ACCESS_KEY
+      - S3_BUCKET_NAME=$S3_BUCKET_NAME
+      - S3_ENDPOINT_URL=$S3_ENDPOINT_URL
+      - S3_REGION_NAME=$S3_REGION_NAME
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.web.rule=Host(`example.com`)"
+    #   - "traefik.http.routers.web.entrypoints=websecure"
+    #   - "traefik.http.services.web.loadbalancer.server.port=8000"
+    depends_on: &django-deps
+      - db
+      - redis
+      - cache
+
+  redis:
+    image: redis:alpine
+
+  cache:
+    image: memcached:alpine
+
+  celery-beat:
+    build: .
+    command: celery -A core beat --loglevel DEBUG --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - .:/home/app/web/
+    environment: *django-env
+    depends_on: *django-deps
+
+  celery:
+    build: .
+    command: celery -A core worker --loglevel DEBUG --concurrency 4
+    volumes:
+      - .:/home/app/web/
+    environment: *django-env
+    depends_on: *django-deps
+
+  db:
+    image: postgres:14.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.0
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - etcd:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+
+  minio:
+    image: minio/minio:RELEASE.2022-03-17T06-34-49Z
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    expose:
+      - 9001
+    volumes:
+      - minio:/minio_data
+    command: minio server /minio_data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  standalone:
+    image: milvusdb/milvus:v2.2.2
+    command: ["milvus", "run", "standalone"]
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+    volumes:
+      - milvus:/var/lib/milvus
+    expose:
+      - 19530
+      - 9091
+    depends_on:
+      - "etcd"
+      - "minio"
+
+volumes:
+  static:
+  media:
+  postgres_data:
+  milvus:
+  minio:
+  etcd:
+
+networks:
+  web:
+    external: true

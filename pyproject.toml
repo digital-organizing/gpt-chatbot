@@ -1,0 +1,75 @@
+[project]
+name = "mv-mietzinsrechner-api"
+version = "0.0.1"
+dependencies = [
+    "celery[redis]",
+    "django",
+    "django-celery-beat",
+    "django-celery-results",
+    "django-environ",
+    "django-model-utils",
+    "django-sesame[ua]",
+    "django-stubs-ext",
+    "django-storages",
+    "boto3",
+    "more-itertools",
+    "pymilvus",
+    "openai",
+    "lxml",
+    "numpy",
+    "pandas",
+    "psycopg2-binary",
+    "pymemcache",
+    "whitenoise[brotli]",
+    "transformers",
+    "Pillow",
+    "django_ratelimit",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.optional-dependencies]
+dev = [
+    "django-stubs",
+    "celery-stubs",
+    "djangorestframework-stubs",
+    "pytest",
+    "types-cachetools",
+    "types-cryptography",
+]
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+python_version = "3.10"
+check_untyped_defs = true
+disallow_any_unimported = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+
+[tool.django-stubs]
+django_settings_module = "core.settings"
+
+
+[tool.flake8]
+max-line-length = 120
+exclude = ".tox,.git,*/migrations/*,*/static/CACHE/*,docs,node_modules,venv"
+
+[tool.yapf]
+based_on_style = "pep8"
+column_limit = 120
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+
+
+[tool.pycodestyle]
+max-line-length = 120
+exclude = ".tox,.git,*/migrations/*,*/static/CACHE/*,docs,node_modules,venv"
+
+
+[tool.ruff]
+line-length = 120
