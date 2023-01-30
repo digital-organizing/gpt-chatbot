@@ -36,6 +36,9 @@ DEBUG = env('DEBUG', default=False)
 
 ALLOWED_HOSTS: List[str] = env.list('ALLOWED_HOSTS', default=['*'])
 
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_HOSTS', default=[])
+
+CORS_ALLOW_ALL_ORIGINS = DEBUG
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,11 +51,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "django_celery_results",
     "django_celery_beat",
+    "corsheaders",
     'chatbot',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

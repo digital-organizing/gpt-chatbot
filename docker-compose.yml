@@ -27,6 +27,7 @@ services:
       - S3_BUCKET_NAME=$S3_BUCKET_NAME
       - S3_ENDPOINT_URL=$S3_ENDPOINT_URL
       - S3_REGION_NAME=$S3_REGION_NAME
+      - CORS_ALLOWED_HOSTS=$CORS_ALLOWED_HOSTS
     # labels:
     #   - "traefik.enable=true"
     #   - "traefik.http.routers.web.rule=Host(`example.com`)"

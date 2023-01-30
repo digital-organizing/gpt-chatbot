@@ -4,6 +4,7 @@ import json
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django_ratelimit.decorators import ratelimit
 
@@ -15,6 +16,7 @@ from core import rates
 
 
 @ratelimit(key='user_or_ip', rate=rates.get_ratelimit)
+@cache_page(60 * 10)
 @csrf_exempt
 def bot_endpoint(request: HttpRequest, slug: str):
     """View to ask questions."""

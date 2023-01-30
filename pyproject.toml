@@ -3,6 +3,7 @@ name = "mv-mietzinsrechner-api"
 version = "0.0.1"
 dependencies = [
     "celery[redis]",
+    "django-cors-headers",
     "django",
     "django-celery-beat",
     "django-celery-results",
