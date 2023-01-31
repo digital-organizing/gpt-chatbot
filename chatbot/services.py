@@ -90,6 +90,7 @@ def index_realm(slug: str):
 
     embeddings = batch_embedding(contents, realm.openai_key, realm.embedding_model, realm.slug)
     insert_embeddings_into(ids, embeddings, realm.slug)
+    Text.objects.filter(id__in=ids).update(indexed=True)
 
     print("Building index.")
     build_index(realm.slug)

@@ -12,12 +12,11 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     JsonResponse,
-
 )
-from pygments.formatters import HtmlFormatter
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django_ratelimit.decorators import ratelimit
+from pygments.formatters import HtmlFormatter
 
 from chatbot.completion import generate_completion
 from chatbot.models import Chatbot
@@ -67,6 +66,16 @@ async def bot_endpoint(request: HttpRequest, slug: str):
         'answer': answer,
         'texts': text_list,
     })
+
+
+async def bot_name(request, slug):
+    """Get name of chatbot."""
+    chatbot = await Chatbot.objects.filter(slug=slug).afirst()
+
+    if chatbot is None:
+        raise Http404("Chatbot not found.")
+
+    return JsonResponse({'name': chatbot.name})
 
 
 def readme(request):
