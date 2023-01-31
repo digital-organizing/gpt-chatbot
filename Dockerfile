@@ -36,4 +36,4 @@ RUN python manage.py collectstatic --no-input
 
 ENTRYPOINT ["/home/app/web/entrypoint.sh"]
 
-CMD gunicorn core.wsgi:application --bind 0.0.0.0:8000
+CMD gunicorn --workers 4 -k uvicorn.workers.UvicornWorker 0.0.0.0:8000 --bind 0.0.0.0:8000

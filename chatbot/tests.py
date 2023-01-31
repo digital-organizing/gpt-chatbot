@@ -24,9 +24,9 @@ openai_model = 'text-embedding-ada-002'
 class TestEmbedding(TestCase):
     """Test cases for embeddings."""
 
-    def test_single_embedding(self):
+    async def test_single_embedding(self):
         """Test creating an embedding from a single text."""
-        embedding = single_embedding("This is a simple test.", openai_key, openai_model, openai_user)
+        embedding = await single_embedding("This is a simple test.", openai_key, openai_model, openai_user)
         self.assertIsNotNone(embedding)
         self.assertEqual(1536, embedding.shape[0])
 
@@ -72,7 +72,7 @@ class TestCollection(TestCase):
         insert_embeddings_into(ids, embeddings, 'test_index')
         build_index('test_index')
 
-    def test_search_texts(self):
+    async def test_search_texts(self):
         """Test searching texts in an indexed collection."""
         embeddings = batch_embedding(self.texts, openai_key, openai_model, openai_user)
         ids = np.arange(len(embeddings))
@@ -81,7 +81,7 @@ class TestCollection(TestCase):
         insert_embeddings_into(ids, embeddings, 'test_search')
         build_index('test_search')
 
-        query_embedding = single_embedding('Where do bird go in winter?', openai_key, openai_model, openai_user)
+        query_embedding = await single_embedding('Where do bird go in winter?', openai_key, openai_model, openai_user)
 
         result = search_in_collection(query_embedding, 'test_search', n=1)
         self.assertEqual(2, result.ids[0])

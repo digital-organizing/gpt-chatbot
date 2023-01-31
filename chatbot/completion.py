@@ -4,9 +4,9 @@ import openai
 from chatbot.models import Chatbot
 
 
-def generate_completion(prompt: str, chatbot: Chatbot) -> str:
+async def generate_completion(prompt: str, chatbot: Chatbot) -> str:
     """Generate completion using the prompt and settings from the chatbot."""
-    response = openai.Completion.create(
+    response = await openai.Completion.acreate(
         prompt=prompt,
         api_key=chatbot.openai_key,
         model=chatbot.model,

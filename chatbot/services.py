@@ -1,6 +1,7 @@
 """Functions implementing the functionality of the chatbots."""
 from typing import List
 
+from asgiref.sync import sync_to_async
 from tqdm import tqdm
 
 from chatbot.collections import (
@@ -15,9 +16,9 @@ from chatbot.embeddings import batch_embedding, count_tokens, single_embedding
 from chatbot.models import Chatbot, Question, Realm, Text
 
 
-def find_texts(question: str, realm: Realm) -> List[Text]:
+async def find_texts(question: str, realm: Realm) -> List[Text]:
     """Find texts realted to the question."""
-    question_embedding = single_embedding(
+    question_embedding = await single_embedding(
         question,
         realm.openai_key,
         realm.embedding_model,
@@ -29,7 +30,12 @@ def find_texts(question: str, realm: Realm) -> List[Text]:
     text_ids = result.ids
     distances = result.distances
 
-    texts = [text for _, text in sorted(zip(distances, Text.objects.filter(id__in=text_ids)), key=lambda a: a[0])]
+    texts = await sync_to_async(
+        lambda:
+        [text for _, text in sorted(zip(
+            distances,
+            Text.objects.filter(id__in=text_ids),
+        ), key=lambda a: a[0])])()
 
     return texts
 
@@ -97,7 +103,7 @@ def reset_index(slug: str):
     drop_collection(realm.slug)
 
 
-def store_question(question, answer, prompt, texts, chatbot):
+async def store_question(question, answer, prompt, texts, chatbot):
     """Create a new question in the database."""
-    question = Question.objects.create(question=question, answer=answer, bot=chatbot, prompt=prompt)
-    question.context.set(texts)
+    question = await Question.objects.acreate(question=question, answer=answer, bot=chatbot, prompt=prompt)
+    await sync_to_async(question.context.set)(texts)

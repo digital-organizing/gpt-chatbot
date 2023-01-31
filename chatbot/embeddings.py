@@ -17,9 +17,9 @@ def count_tokens(text) -> int:
     return len(tokenizer(text)['input_ids'])
 
 
-def single_embedding(text: str, openai_key: str, embedding_model: str, user: str) -> np.ndarray:
+async def single_embedding(text: str, openai_key: str, embedding_model: str, user: str) -> np.ndarray:
     """Generate a single embedding with model and api key of the realm."""
-    response = openai.Embedding.create(
+    response = await openai.Embedding.acreate(
         api_key=openai_key,
         input=text,
         model=embedding_model,
