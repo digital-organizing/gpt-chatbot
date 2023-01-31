@@ -22,9 +22,11 @@ dependencies = [
     "numpy",
     "pandas",
     "psycopg2-binary",
+    "markdown",
     "pymemcache",
     "whitenoise[brotli]",
     "transformers",
+    "Pygments",
     "Pillow",
     "django_ratelimit",
 ]

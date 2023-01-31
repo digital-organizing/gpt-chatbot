@@ -1,14 +1,20 @@
 """Views to access the chabot functionality."""
+import os
+import pathlib
 from typing import Optional
 
+import markdown
 from asgiref.sync import async_to_sync, sync_to_async
 from django.core.exceptions import PermissionDenied
 from django.http import (
     Http404,
     HttpRequest,
+    HttpResponse,
     HttpResponseBadRequest,
     JsonResponse,
+
 )
+from pygments.formatters import HtmlFormatter
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django_ratelimit.decorators import ratelimit
@@ -61,3 +67,34 @@ async def bot_endpoint(request: HttpRequest, slug: str):
         'answer': answer,
         'texts': text_list,
     })
+
+
+def readme(request):
+    """Render the README.MD as index view."""
+    path = pathlib.Path(__file__).parent.resolve() / '../README.md'
+
+    style = HtmlFormatter().get_style_defs('.codehilite')
+
+    with open(path) as fp:
+        content = markdown.markdown(fp.read(), extensions=['fenced_code', 'codehilite'])
+
+    html = f"""<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.*/css/pico.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;700&display=swap" rel="stylesheet">
+    <style>{style} :root {{ --font-family: 'Raleway', sans-serif; }}</style>
+    <title>GPT Chatbot</title>
+  </head>
+  <body>
+    <main class="container">
+    {content}
+    </main>
+  </body>
+</html>
+    """
+    return HttpResponse(html)

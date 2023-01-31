@@ -113,6 +113,8 @@ kombu==5.2.4
     # via celery
 lxml==4.9.2
     # via mv-mietzinsrechner-api (pyproject.toml)
+markdown==3.4.1
+    # via mv-mietzinsrechner-api (pyproject.toml)
 mmh3==3.0.0
     # via pymilvus
 more-itertools==9.0.0
@@ -143,6 +145,8 @@ prompt-toolkit==3.0.36
 protobuf==3.20.3
     # via grpcio-tools
 psycopg2-binary==2.9.5
+    # via mv-mietzinsrechner-api (pyproject.toml)
+pygments==2.14.0
     # via mv-mietzinsrechner-api (pyproject.toml)
 pymemcache==4.0.0
     # via mv-mietzinsrechner-api (pyproject.toml)
