@@ -52,7 +52,7 @@ class Text(models.Model):
     realm = models.ForeignKey(Realm, models.CASCADE)
 
     content = models.TextField()
-    url = models.CharField(max_length=300, blank=True)
+    url = models.CharField(max_length=2048, blank=True)
     page = models.IntegerField(default=0)
 
     internal = models.BooleanField(default=False)
