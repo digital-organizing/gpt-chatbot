@@ -16,8 +16,9 @@ from chatbot.embeddings import batch_embedding, count_tokens, single_embedding
 from chatbot.models import Chatbot, Question, Realm, Text
 
 
-def get_distance(entry: Tuple[float, Text])-> float:
+def get_distance(entry: Tuple[float, Text]) -> float:
     return entry[0]
+
 
 async def find_texts(question: str, realm: Realm) -> List[Text]:
     """Find texts realted to the question."""
@@ -34,12 +35,12 @@ async def find_texts(question: str, realm: Realm) -> List[Text]:
     text_ids = result.ids
     distances = result.distances
 
-
     texts: List[Text] = await sync_to_async(lambda: [
         text for _, text in sorted(zip(
             distances,
             Text.objects.filter(id__in=text_ids),
-        ), key=get_distance)
+        ),
+                                   key=get_distance)
     ])()
 
     return texts
@@ -74,7 +75,9 @@ def generate_prompt(question: str, texts: List[Text], chatbot: Chatbot) -> str:
     return prompt
 
 
-def index_realm(slug: str, batch_size: int = 10_000) -> None:
+def index_realm(slug: str,
+                batch_size: int = 10_000,
+                monitor: bool = False) -> None:
     """Create embedding for each text in the realm and add it to the milvus index."""
     realm = Realm.objects.get(slug=slug)
 
@@ -90,6 +93,8 @@ def index_realm(slug: str, batch_size: int = 10_000) -> None:
         contents.append(text.content)
         if len(ids) < batch_size:
             continue
+        if monitor:
+            print(contents[-1])
         embeddings = batch_embedding(contents, realm.openai_key,
                                      realm.embedding_model, realm.slug,
                                      realm.openai_org)
@@ -97,11 +102,12 @@ def index_realm(slug: str, batch_size: int = 10_000) -> None:
         Text.objects.filter(id__in=ids).update(indexed=True)
         ids, contents = [], []
 
-    embeddings = batch_embedding(contents, realm.openai_key,
-                                 realm.embedding_model, realm.slug,
-                                 realm.openai_org)
-    insert_embeddings_into(ids, embeddings, realm.slug)
-    Text.objects.filter(id__in=ids).update(indexed=True)
+    if len(ids) > 0:
+        embeddings = batch_embedding(contents, realm.openai_key,
+                                     realm.embedding_model, realm.slug,
+                                     realm.openai_org)
+        insert_embeddings_into(ids, embeddings, realm.slug)
+        Text.objects.filter(id__in=ids).update(indexed=True)
 
     print("Building index.")
     build_index(realm.slug)
