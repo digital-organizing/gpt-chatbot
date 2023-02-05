@@ -7,17 +7,19 @@ import numpy as np
 import openai
 from transformers import GPT2Tokenizer
 
+from usage.services import store_charge
+
 tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
 
 logger = logging.getLogger(__name__)
 
 
-def count_tokens(text) -> int:
+def count_tokens(text: str) -> int:
     """Count tokens in given text."""
     return len(tokenizer(text)['input_ids'])
 
 
-async def single_embedding(text: str, openai_key: str, embedding_model: str, user: str) -> np.ndarray:
+async def single_embedding(text: str, openai_key: str, embedding_model: str, user: str, org_id: str = '') -> np.ndarray:
     """Generate a single embedding with model and api key of the realm."""
     response = await openai.Embedding.acreate(
         api_key=openai_key,
@@ -25,6 +27,7 @@ async def single_embedding(text: str, openai_key: str, embedding_model: str, use
         model=embedding_model,
         user=user,
     )
+    store_charge(org_id, response)
 
     return np.array(response['data'][0]['embedding'])
 
@@ -52,8 +55,8 @@ def _chunk_text(texts: List[str], max_tokens=6000) -> List[List[str]]:
     return chunks
 
 
-def batch_embedding(texts: List[str], openai_key: str, embedding_model: str, user: str) -> np.ndarray:
-    """Generate batch of embedding for provided texts."""
+def batch_embedding(texts: List[str], openai_key: str, embedding_model: str, user: str, org_id: str = '') -> np.ndarray:
+    """Generate batch of embeddings for provided texts."""
     results = []
     for chunk in _chunk_text(texts):
         response = openai.Embedding.create(
@@ -62,6 +65,7 @@ def batch_embedding(texts: List[str], openai_key: str, embedding_model: str, use
             model=embedding_model,
             user=user,
         )
+        store_charge(org_id, response)
         results += [data['embedding'] for data in response['data']]
 
     return np.array(results)

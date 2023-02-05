@@ -1,7 +1,10 @@
 """Completion engine."""
+from typing import cast
+
 import openai
 
 from chatbot.models import Chatbot
+from usage.services import astore_charge
 
 
 async def generate_completion(prompt: str, chatbot: Chatbot) -> str:
@@ -17,4 +20,6 @@ async def generate_completion(prompt: str, chatbot: Chatbot) -> str:
         user=chatbot.slug,
     )
 
-    return response['choices'][0]['text']
+    await astore_charge(chatbot.openai_org, response)
+
+    return cast(str, response['choices'][0]['text'])

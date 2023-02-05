@@ -1,5 +1,4 @@
 """Views to access the chabot functionality."""
-import os
 import pathlib
 from typing import Optional
 
@@ -25,13 +24,14 @@ from core import rates
 
 
 @sync_to_async
-@ratelimit(key='user_or_ip', rate=rates.get_ratelimit)
+#@ratelimit(key='user_or_ip', rate=rates.get_ratelimit)
 @cache_page(60 * 10)
 @csrf_exempt
 @async_to_sync
-async def bot_endpoint(request: HttpRequest, slug: str):
+async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
     """View to ask questions."""
-    chatbot: Optional[Chatbot] = await Chatbot.objects.filter(slug=slug).afirst()
+    chatbot: Optional[Chatbot] = await Chatbot.objects.filter(slug=slug
+                                                              ).afirst()
 
     if chatbot is None:
         raise Http404("Chatbot not found")
@@ -40,14 +40,16 @@ async def bot_endpoint(request: HttpRequest, slug: str):
         if sync_to_async(lambda: request.user.is_anonymous)():
             raise PermissionDenied("You need to log in to use this bot.")
 
-        if sync_to_async(lambda chatbot: request.user not in chatbot.users.all())(chatbot):
+        if sync_to_async(lambda chatbot: request.user not in chatbot.users.all(
+        ))(chatbot):
             raise PermissionDenied("You are not allowed to use this bot.")
 
     question = request.GET.get('question', None)
 
     if question is None:
         return HttpResponseBadRequest("You need to provide a question.")
-    texts = await find_texts(question, await sync_to_async(lambda chatbot: chatbot.realm)(chatbot))
+    texts = await find_texts(
+        question, await sync_to_async(lambda chatbot: chatbot.realm)(chatbot))
 
     prompt = generate_prompt(question, texts, chatbot)
 
@@ -68,7 +70,7 @@ async def bot_endpoint(request: HttpRequest, slug: str):
     })
 
 
-async def bot_name(request, slug):
+async def bot_name(request: HttpRequest, slug: str) -> HttpResponse:
     """Get name of chatbot."""
     chatbot = await Chatbot.objects.filter(slug=slug).afirst()
 
@@ -78,14 +80,15 @@ async def bot_name(request, slug):
     return JsonResponse({'name': chatbot.name})
 
 
-def readme(request):
+def readme(request: HttpRequest) -> HttpResponse:
     """Render the README.MD as index view."""
     path = pathlib.Path(__file__).parent.resolve() / '../README.md'
 
     style = HtmlFormatter().get_style_defs('.codehilite')
 
     with open(path) as fp:
-        content = markdown.markdown(fp.read(), extensions=['fenced_code', 'codehilite'])
+        content = markdown.markdown(fp.read(),
+                                    extensions=['fenced_code', 'codehilite'])
 
     html = f"""<!doctype html>
 <html lang="en">
@@ -104,6 +107,5 @@ def readme(request):
     {content}
     </main>
   </body>
-</html>
-    """
+</html>"""
     return HttpResponse(html)

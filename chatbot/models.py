@@ -7,6 +7,7 @@ class Realm(models.Model):
     """Collects texts and configuration about generating embeddings."""
 
     openai_key = models.CharField(max_length=200)
+    openai_org = models.CharField(max_length=200, blank=True)
     slug = models.SlugField(unique=True)
     embedding_model = models.CharField(max_length=100, default="text-embedding-ada-002")
     embedding_dim = models.IntegerField(default=1536)
@@ -22,6 +23,7 @@ class Chatbot(models.Model):
     """Configuration for a chatbot."""
 
     openai_key = models.CharField(max_length=200)
+    openai_org = models.CharField(max_length=200, blank=True)
 
     prompt_template = models.TextField()
 
@@ -64,6 +66,9 @@ class Text(models.Model):
         """Represent as a string."""
         return self.content
 
+    class Meta:
+        verbose_name = 'Text'
+
 
 class Question(models.Model):
     """A question that was asked."""
@@ -78,6 +83,6 @@ class Question(models.Model):
     bot = models.ForeignKey(Chatbot, models.CASCADE)
     user = models.ForeignKey(get_user_model(), models.SET_NULL, blank=True, null=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Represent as a string."""
         return self.question

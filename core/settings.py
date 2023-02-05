@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "django_celery_results",
     "django_celery_beat",
     "corsheaders",
+    'usage',
     'chatbot',
 ]
 
@@ -103,16 +104,20 @@ CACHES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
@@ -148,7 +153,8 @@ MEDIA_ROOT = '/media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_CONFIG = env.email_url('EMAIL_URL', default='smtp://user@:password@localhost:25')
+EMAIL_CONFIG = env.email_url('EMAIL_URL',
+                             default='smtp://user@:password@localhost:25')
 
 vars().update(EMAIL_CONFIG)
 
@@ -202,8 +208,8 @@ AWS_S3_REGION_NAME = env('S3_REGION_NAME', default='')
 AWS_S3_ENDPOINT_URL = env('S3_ENDPOINT_URL', default='')
 AWS_S3_CUSTOM_DOMAIN = env('S3_CUSTOM_DOMAIN', default=None)
 
-USER_RATE_LIMIT = '100/m'
-ANON_RATE_LIMIT = '10/m'
+USER_RATE_LIMIT = env('USER_RATE_LIMIT', default='10/m')
+ANON_RATE_LIMIT = env('ANON_RATE_LIMIT', default='1/m')
 
 LOGGING = {
     'version': 1,

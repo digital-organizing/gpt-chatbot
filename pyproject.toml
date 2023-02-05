@@ -32,8 +32,7 @@ dependencies = [
 ]
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools ~= 58.0"]
 
 [project.optional-dependencies]
 dev = [
@@ -54,6 +53,11 @@ disallow_any_unimported = true
 warn_unused_ignores = true
 warn_redundant_casts = true
 warn_unused_configs = true
+
+[tool.pylsp-mypy]
+enabled = true
+dmypy = true
+
 
 [tool.django-stubs]
 django_settings_module = "core.settings"
