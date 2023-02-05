@@ -43,6 +43,8 @@ CORS_ALLOW_ALL_ORIGINS = DEBUG
 
 INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
+    'chatbot',
+    'usage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,8 +54,6 @@ INSTALLED_APPS = [
     "django_celery_results",
     "django_celery_beat",
     "corsheaders",
-    'usage',
-    'chatbot',
 ]
 
 MIDDLEWARE = [
