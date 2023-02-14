@@ -4,67 +4,46 @@
 #
 #    pip-compile --output-file=requirements/prod.txt --resolver=backtracking pyproject.toml
 #
-aiohttp==3.8.3
+aiohttp==3.8.4
     # via openai
 aiosignal==1.3.1
     # via aiohttp
-amqp==5.1.1
-    # via kombu
 asgiref==3.6.0
     # via django
 async-timeout==4.0.2
     # via
     #   aiohttp
     #   redis
+asyncio-redis-rate-limit==0.2.0
+    # via mv-mietzinsrechner-api (pyproject.toml)
 attrs==22.2.0
     # via aiohttp
-billiard==3.6.4.0
-    # via celery
-boto3==1.26.60
+backoff==2.2.1
     # via mv-mietzinsrechner-api (pyproject.toml)
-botocore==1.29.60
+boto3==1.26.70
+    # via mv-mietzinsrechner-api (pyproject.toml)
+botocore==1.29.70
     # via
     #   boto3
     #   s3transfer
 brotli==1.0.9
     # via whitenoise
-celery[redis]==5.2.7
-    # via
-    #   django-celery-beat
-    #   django-celery-results
-    #   mv-mietzinsrechner-api (pyproject.toml)
 certifi==2022.12.7
     # via requests
-charset-normalizer==2.1.1
+charset-normalizer==3.0.1
     # via
     #   aiohttp
     #   requests
 click==8.1.3
+    # via uvicorn
+django==4.1.7
     # via
-    #   celery
-    #   click-didyoumean
-    #   click-plugins
-    #   click-repl
-    #   uvicorn
-click-didyoumean==0.3.0
-    # via celery
-click-plugins==1.1.1
-    # via celery
-click-repl==0.2.0
-    # via celery
-django==4.1.5
-    # via
-    #   django-celery-beat
     #   django-cors-headers
     #   django-model-utils
     #   django-sesame
     #   django-storages
     #   django-stubs-ext
     #   mv-mietzinsrechner-api (pyproject.toml)
-django-celery-beat==2.4.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
-django-celery-results==2.4.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
 django-cors-headers==3.13.0
     # via mv-mietzinsrechner-api (pyproject.toml)
 django-environ==0.9.0
@@ -79,8 +58,6 @@ django-storages==1.13.2
     # via mv-mietzinsrechner-api (pyproject.toml)
 django-stubs-ext==0.7.0
     # via mv-mietzinsrechner-api (pyproject.toml)
-django-timezone-field==5.0
-    # via django-celery-beat
 filelock==3.9.0
     # via
     #   huggingface-hub
@@ -109,8 +86,6 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-kombu==5.2.4
-    # via celery
 lxml==4.9.2
     # via mv-mietzinsrechner-api (pyproject.toml)
 markdown==3.4.1
@@ -123,12 +98,12 @@ multidict==6.0.4
     # via
     #   aiohttp
     #   yarl
-numpy==1.24.1
+numpy==1.24.2
     # via
     #   mv-mietzinsrechner-api (pyproject.toml)
     #   pandas
     #   transformers
-openai==0.26.4
+openai==0.26.5
     # via mv-mietzinsrechner-api (pyproject.toml)
 packaging==23.0
     # via
@@ -140,8 +115,6 @@ pandas==1.5.3
     #   pymilvus
 pillow==9.4.0
     # via mv-mietzinsrechner-api (pyproject.toml)
-prompt-toolkit==3.0.36
-    # via click-repl
 protobuf==3.20.3
     # via grpcio-tools
 psycopg2-binary==2.9.5
@@ -150,26 +123,20 @@ pygments==2.14.0
     # via mv-mietzinsrechner-api (pyproject.toml)
 pymemcache==4.0.0
     # via mv-mietzinsrechner-api (pyproject.toml)
-pymilvus==2.2.1
+pymilvus==2.2.2
     # via mv-mietzinsrechner-api (pyproject.toml)
-python-crontab==2.7.1
-    # via django-celery-beat
 python-dateutil==2.8.2
     # via
     #   botocore
     #   pandas
-    #   python-crontab
 pytz==2022.7.1
-    # via
-    #   celery
-    #   django-timezone-field
-    #   pandas
+    # via pandas
 pyyaml==6.0
     # via
     #   huggingface-hub
     #   transformers
-redis==4.4.2
-    # via celery
+redis==4.5.1
+    # via mv-mietzinsrechner-api (pyproject.toml)
 regex==2022.10.31
     # via transformers
 requests==2.28.2
@@ -181,7 +148,6 @@ s3transfer==0.6.0
     # via boto3
 six==1.16.0
     # via
-    #   click-repl
     #   grpcio
     #   python-dateutil
 sqlparse==0.4.3
@@ -193,14 +159,13 @@ tqdm==4.64.1
     #   huggingface-hub
     #   openai
     #   transformers
-transformers==4.26.0
+transformers==4.26.1
     # via mv-mietzinsrechner-api (pyproject.toml)
 typing-extensions==4.4.0
     # via
+    #   asyncio-redis-rate-limit
     #   django-stubs-ext
     #   huggingface-hub
-tzdata==2022.7
-    # via django-celery-beat
 ua-parser==0.16.1
     # via django-sesame
 ujson==5.4.0
@@ -211,13 +176,6 @@ urllib3==1.26.14
     #   requests
 uvicorn==0.20.0
     # via mv-mietzinsrechner-api (pyproject.toml)
-vine==5.0.0
-    # via
-    #   amqp
-    #   celery
-    #   kombu
-wcwidth==0.2.6
-    # via prompt-toolkit
 whitenoise[brotli]==6.3.0
     # via mv-mietzinsrechner-api (pyproject.toml)
 yarl==1.8.2

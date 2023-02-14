@@ -44,21 +44,6 @@ services:
   cache:
     image: memcached:alpine
 
-  celery-beat:
-    build: .
-    command: celery -A core beat --loglevel DEBUG --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    volumes:
-      - .:/home/app/web/
-    environment: *django-env
-    depends_on: *django-deps
-
-  celery:
-    build: .
-    command: celery -A core worker --loglevel DEBUG --concurrency 4
-    volumes:
-      - .:/home/app/web/
-    environment: *django-env
-    depends_on: *django-deps
 
   db:
     image: postgres:14.0-alpine
