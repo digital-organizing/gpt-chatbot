@@ -57,7 +57,8 @@ async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
         return HttpResponseBadRequest("You need to provide a question.")
 
     if await is_input_flagged(question, chatbot):
-        return HttpResponseForbidden("The question was flagged as inappropriate")
+        return HttpResponseForbidden(
+            "The question was flagged as inappropriate")
 
     if existing_answer := await find_question(question, chatbot):
         answer = existing_answer.answer

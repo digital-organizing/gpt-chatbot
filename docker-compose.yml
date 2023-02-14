@@ -3,7 +3,7 @@ version: "3.7"
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn core.asgi:application --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --workers=1 --timeout 1200
     volumes:
       - .:/home/app/web/
       - static:/static
