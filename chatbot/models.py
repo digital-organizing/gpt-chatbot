@@ -83,6 +83,8 @@ class Question(models.Model):
     bot = models.ForeignKey(Chatbot, models.CASCADE)
     user = models.ForeignKey(get_user_model(), models.SET_NULL, blank=True, null=True)
 
+    approved = models.BooleanField(default=False)
+
     def __str__(self) -> str:
         """Represent as a string."""
         return self.question

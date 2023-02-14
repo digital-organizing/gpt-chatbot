@@ -19,7 +19,11 @@ def count_tokens(text: str) -> int:
     return len(tokenizer(text)['input_ids'])
 
 
-async def single_embedding(text: str, openai_key: str, embedding_model: str, user: str, org_id: str = '') -> np.ndarray:
+async def single_embedding(text: str,
+                           openai_key: str,
+                           embedding_model: str,
+                           user: str,
+                           org_id: str = '') -> np.ndarray:
     """Generate a single embedding with model and api key of the realm."""
     response = await openai.Embedding.acreate(
         api_key=openai_key,
@@ -46,7 +50,9 @@ def _chunk_text(texts: List[str], max_tokens=6000) -> List[List[str]]:
         if length > max_tokens:
             tokens_per_char = length / len(sentence)
             sentence_length = int((0.75 * max_tokens) / tokens_per_char)
-            chunks += [[part] for part in textwrap.wrap(sentence, width=sentence_length)]
+            chunks += [[
+                part
+            ] for part in textwrap.wrap(sentence, width=sentence_length)]
             current_length = count_tokens(chunks[-1][0])
             continue
 
@@ -55,7 +61,11 @@ def _chunk_text(texts: List[str], max_tokens=6000) -> List[List[str]]:
     return chunks
 
 
-def batch_embedding(texts: List[str], openai_key: str, embedding_model: str, user: str, org_id: str = '') -> np.ndarray:
+def batch_embedding(texts: List[str],
+                    openai_key: str,
+                    embedding_model: str,
+                    user: str,
+                    org_id: str = '') -> np.ndarray:
     """Generate batch of embeddings for provided texts."""
     results = []
     for chunk in _chunk_text(texts):

@@ -1,6 +1,7 @@
 """Functions implementing the functionality of the chatbots."""
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
+import openai
 from asgiref.sync import sync_to_async
 from tqdm import tqdm
 
@@ -18,6 +19,32 @@ from chatbot.models import Chatbot, Question, Realm, Text
 
 def get_distance(entry: Tuple[float, Text]) -> float:
     return entry[0]
+
+
+async def find_question(question: str, bot: Chatbot) -> Optional[Question]:
+    query = await Question.objects.filter(question__iexact=question,
+                                          bot=bot).afirst()
+
+    return query
+
+
+async def similair_questions(question: str):
+    query = Question.objects.all().filter(
+        question__search=question,
+        approved=True).distinct('question').values_list(
+            'question',
+            flat=True,
+        )[:10]
+
+    return [question async for question in query]
+
+
+async def is_input_flagged(text: str, bot: Chatbot) -> bool:
+    response = await openai.Moderation.acreate(
+        input=text,
+        api_key=bot.openai_key,
+    )
+    return response['results'][0]['flagged']
 
 
 async def find_texts(question: str, realm: Realm) -> List[Text]:

@@ -10,6 +10,7 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseBadRequest,
+    HttpResponseForbidden,
     JsonResponse,
 )
 from django.views.decorators.cache import cache_page
@@ -19,13 +20,19 @@ from pygments.formatters import HtmlFormatter
 
 from chatbot.completion import generate_completion
 from chatbot.models import Chatbot
-from chatbot.services import find_texts, generate_prompt, store_question
+from chatbot.services import (
+    find_question,
+    find_texts,
+    generate_prompt,
+    is_input_flagged,
+    similair_questions,
+    store_question,
+)
 from core import rates
 
 
 @sync_to_async
-#@ratelimit(key='user_or_ip', rate=rates.get_ratelimit)
-@cache_page(60 * 10)
+@ratelimit(key='user_or_ip', rate=rates.get_ratelimit)
 @csrf_exempt
 @async_to_sync
 async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
@@ -48,6 +55,24 @@ async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
 
     if question is None:
         return HttpResponseBadRequest("You need to provide a question.")
+
+    if await is_input_flagged(question, chatbot):
+        return HttpResponseForbidden("The question was flagged as inappropriate")
+
+    if existing_answer := await find_question(question, chatbot):
+        answer = existing_answer.answer
+        text_list = [{
+            'id': text.id,
+            'content': text.content,
+            'url': text.url,
+            'page': text.page,
+        } async for text in existing_answer.context.filter(internal=False)]
+
+        return JsonResponse({
+            'answer': answer,
+            'texts': text_list,
+        })
+
     texts = await find_texts(
         question, await sync_to_async(lambda chatbot: chatbot.realm)(chatbot))
 
@@ -67,6 +92,16 @@ async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
     return JsonResponse({
         'answer': answer,
         'texts': text_list,
+    })
+
+
+@sync_to_async
+@cache_page(60 * 10)
+@async_to_sync
+async def autocomplete_questions(request):
+    question = request.GET.get('q', '')
+    return JsonResponse({
+        'data': await similair_questions(question),
     })
 
 

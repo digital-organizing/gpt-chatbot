@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     "django_celery_results",
     "django_celery_beat",
     "corsheaders",
@@ -209,7 +210,7 @@ AWS_S3_ENDPOINT_URL = env('S3_ENDPOINT_URL', default='')
 AWS_S3_CUSTOM_DOMAIN = env('S3_CUSTOM_DOMAIN', default=None)
 
 USER_RATE_LIMIT = env('USER_RATE_LIMIT', default='10/m')
-ANON_RATE_LIMIT = env('ANON_RATE_LIMIT', default='1/m')
+ANON_RATE_LIMIT = env('ANON_RATE_LIMIT', default='15/m')
 
 LOGGING = {
     'version': 1,
