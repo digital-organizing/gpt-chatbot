@@ -35,6 +35,7 @@ async def similair_questions(question: str):
             'question',
             flat=True,
         )[:10]
+    print(await query.acount())
 
     return [question async for question in query]
 

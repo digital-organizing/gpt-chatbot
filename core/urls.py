@@ -14,7 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.http import HttpResponse, HttpResponseForbidden
 from django.urls import include, path
+from django_ratelimit.exceptions import Ratelimited
 
 admin.site.site_header = 'AI Chatbot'
 
@@ -22,3 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('chatbot.urls')),
 ]
+
+def handler403(request, exception=None):
+    if isinstance(exception, Ratelimited):
+        return HttpResponse('Ratelimited, please wait', status=429)
+    return HttpResponseForbidden('Forbidden')

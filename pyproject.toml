@@ -1,50 +1,48 @@
 [project]
-name = "mv-mietzinsrechner-api"
+name = "gpt-chatbot"
 version = "0.0.1"
+authors = [{ name = "Sandro Covo", email = "sandro@digitalorganizing.ch" }]
+readme = "README.md"
 dependencies = [
-    "asyncio-redis-rate-limit",
-    "backoff",
-    "django-cors-headers",
-    "django",
-    "django-environ",
-    "django-model-utils",
-    "django-sesame[ua]",
-    "django-stubs-ext",
-    "django-storages",
-    "uvicorn",
-    "boto3",
-    "gunicorn",
-    "more-itertools",
-    "pymilvus",
-    "openai",
-    "lxml",
-    "numpy",
-    "pandas",
-    "psycopg2-binary",
-    "markdown",
-    "pymemcache",
-    "redis",
-    "whitenoise[brotli]",
-    "transformers",
-    "Pygments",
-    "Pillow",
-    "django_ratelimit",
+  "asyncio-redis-rate-limit",
+  "backoff",
+  "django-cors-headers",
+  "django",
+  "django-environ",
+  "django-model-utils",
+  "django-sesame[ua]",
+  "django-stubs-ext",
+  "django-storages",
+  "uvicorn",
+  "boto3",
+  "gunicorn",
+  "more-itertools",
+  "pymilvus",
+  "openai",
+  "lxml",
+  "numpy",
+  "pandas",
+  "psycopg2-binary",
+  "markdown",
+  "pymemcache",
+  "redis",
+  "whitenoise[brotli]",
+  "transformers",
+  "Pygments",
+  "Pillow",
+  "django_ratelimit",
 ]
+
+[project.urls]
+homepage = "https://chatbot.api.digitalorganizing.ch"
+repository = "https://github.com/digital-organizing/gpt-chatbot"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.optional-dependencies]
-dev = [
-    "django-stubs",
-    "celery-stubs",
-    "djangorestframework-stubs",
-    "pytest",
-    "types-cachetools",
-    "types-cryptography",
-    "tqdm-stubs",
-]
+dev = ["pytest"]
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]
@@ -58,6 +56,7 @@ warn_unused_configs = true
 [tool.pylsp-mypy]
 enabled = true
 strict = true
+dmypy = true
 
 
 [tool.django-stubs]

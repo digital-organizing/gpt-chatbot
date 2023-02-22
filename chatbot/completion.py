@@ -4,7 +4,7 @@ from typing import cast
 import backoff
 import openai
 from asyncio_redis_rate_limit import RateLimiter, RateLimitError, RateSpec
-from redis.asyncio import Redis as AsyncRedis  # pip install redis
+from redis.asyncio import Redis as AsyncRedis
 
 from chatbot.models import Chatbot
 from usage.services import astore_charge

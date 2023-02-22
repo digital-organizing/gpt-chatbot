@@ -15,7 +15,7 @@ from django.http import (
 )
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
-from django_ratelimit.decorators import ratelimit
+from django_ratelimit.decorators import Ratelimited, ratelimit
 from pygments.formatters import HtmlFormatter
 
 from chatbot.completion import generate_completion
@@ -57,8 +57,7 @@ async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
         return HttpResponseBadRequest("You need to provide a question.")
 
     if await is_input_flagged(question, chatbot):
-        return HttpResponseForbidden(
-            "The question was flagged as inappropriate")
+        return HttpResponse("The question was flagged as inappropriate", status=451)
 
     if existing_answer := await find_question(question, chatbot):
         answer = existing_answer.answer
@@ -96,16 +95,16 @@ async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
     })
 
 
-@sync_to_async
-@cache_page(60 * 10)
-@async_to_sync
-async def autocomplete_questions(request):
-    question = request.GET.get('q', '')
+async def autocomplete_questions(request: HttpRequest) -> HttpResponse:
+    question = request.GET.get('q', '').strip()
     return JsonResponse({
         'data': await similair_questions(question),
     })
 
 
+@sync_to_async
+@cache_page(60 * 10)
+@async_to_sync
 async def bot_name(request: HttpRequest, slug: str) -> HttpResponse:
     """Get name of chatbot."""
     chatbot = await Chatbot.objects.filter(slug=slug).afirst()

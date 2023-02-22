@@ -199,8 +199,8 @@ AWS_S3_REGION_NAME = env('S3_REGION_NAME', default='')
 AWS_S3_ENDPOINT_URL = env('S3_ENDPOINT_URL', default='')
 AWS_S3_CUSTOM_DOMAIN = env('S3_CUSTOM_DOMAIN', default=None)
 
-USER_RATE_LIMIT = env('USER_RATE_LIMIT', default='10/m')
-ANON_RATE_LIMIT = env('ANON_RATE_LIMIT', default='15/m')
+USER_RATE_LIMIT = env('USER_RATE_LIMIT', default='20/m')
+ANON_RATE_LIMIT = env('ANON_RATE_LIMIT', default='20/m')
 
 LOGGING = {
     'version': 1,
@@ -215,3 +215,4 @@ LOGGING = {
         'level': 'DEBUG' if DEBUG else 'WARNING',
     },
 }
+
