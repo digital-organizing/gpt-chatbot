@@ -22,19 +22,21 @@ def get_distance(entry: Tuple[float, Text]) -> float:
 
 
 async def find_question(question: str, bot: Chatbot) -> Optional[Question]:
-    query = await Question.objects.filter(question__iexact=question,
-                                          bot=bot).afirst()
+    query = await Question.objects.filter(question__iexact=question, bot=bot).afirst()
 
     return query
 
 
 async def similair_questions(question: str):
-    query = Question.objects.all().filter(
-        question__search=question,
-        approved=True).distinct('question').values_list(
-            'question',
+    query = (
+        Question.objects.all()
+        .filter(question__search=question, approved=True)
+        .distinct("question")
+        .values_list(
+            "question",
             flat=True,
         )[:10]
+    )
     print(await query.acount())
 
     return [question async for question in query]
@@ -45,7 +47,7 @@ async def is_input_flagged(text: str, bot: Chatbot) -> bool:
         input=text,
         api_key=bot.openai_key,
     )
-    return response['results'][0]['flagged']
+    return response["results"][0]["flagged"]
 
 
 async def find_texts(question: str, realm: Realm) -> List[Text]:
@@ -63,22 +65,27 @@ async def find_texts(question: str, realm: Realm) -> List[Text]:
     text_ids = result.ids
     distances = result.distances
 
-    texts: List[Text] = await sync_to_async(lambda: [
-        text for _, text in sorted(zip(
-            distances,
-            Text.objects.filter(id__in=text_ids),
-        ),
-                                   key=get_distance)
-    ])()
+    texts: List[Text] = await sync_to_async(
+        lambda: [
+            text
+            for _, text in sorted(
+                zip(
+                    distances,
+                    Text.objects.filter(id__in=text_ids),
+                ),
+                key=get_distance,
+            )
+        ]
+    )()
 
     return texts
 
 
 def _format_context(texts: List[Text], max_tokens: int) -> str:
-    result = ''
+    result = ""
 
     for text in texts:
-        context = f'[{text.id}] {text.content}\n'
+        context = f"[{text.id}] {text.content}\n"
 
         if count_tokens(result + context) > max_tokens:
             return result
@@ -90,22 +97,19 @@ def _format_context(texts: List[Text], max_tokens: int) -> str:
 
 def generate_prompt(question: str, texts: List[Text], chatbot: Chatbot) -> str:
     """Generate an answer to the question using the texts and the configuration of the chatbot."""
-    prompt_length = count_tokens(
-        chatbot.prompt_template) + count_tokens(question)
+    prompt_length = count_tokens(chatbot.prompt_template) + count_tokens(question)
 
     prompt = chatbot.prompt_template.format(
         question=question,
         context=_format_context(
-            texts,
-            chatbot.model_max_tokens - prompt_length - chatbot.max_tokens),
+            texts, chatbot.model_max_tokens - prompt_length - chatbot.max_tokens
+        ),
     )
 
     return prompt
 
 
-def index_realm(slug: str,
-                batch_size: int = 10_000,
-                monitor: bool = False) -> None:
+def index_realm(slug: str, batch_size: int = 10_000, monitor: bool = False) -> None:
     """Create embedding for each text in the realm and add it to the milvus index."""
     realm = Realm.objects.get(slug=slug)
 
@@ -123,17 +127,25 @@ def index_realm(slug: str,
             continue
         if monitor:
             print(contents[-1])
-        embeddings = batch_embedding(contents, realm.openai_key,
-                                     realm.embedding_model, realm.slug,
-                                     realm.openai_org)
+        embeddings = batch_embedding(
+            contents,
+            realm.openai_key,
+            realm.embedding_model,
+            realm.slug,
+            realm.openai_org,
+        )
         insert_embeddings_into(ids, embeddings, realm.slug)
         Text.objects.filter(id__in=ids).update(indexed=True)
         ids, contents = [], []
 
     if len(ids) > 0:
-        embeddings = batch_embedding(contents, realm.openai_key,
-                                     realm.embedding_model, realm.slug,
-                                     realm.openai_org)
+        embeddings = batch_embedding(
+            contents,
+            realm.openai_key,
+            realm.embedding_model,
+            realm.slug,
+            realm.openai_org,
+        )
         insert_embeddings_into(ids, embeddings, realm.slug)
         Text.objects.filter(id__in=ids).update(indexed=True)
 
@@ -149,11 +161,11 @@ def reset_index(slug: str) -> None:
     drop_collection(realm.slug)
 
 
-async def store_question(question: str, answer: str, prompt: str,
-                         texts: List[Text], chatbot: Chatbot) -> None:
+async def store_question(
+    question: str, answer: str, prompt: str, texts: List[Text], chatbot: Chatbot
+) -> None:
     """Create a new question in the database."""
-    question_obj = await Question.objects.acreate(question=question,
-                                                  answer=answer,
-                                                  bot=chatbot,
-                                                  prompt=prompt)
+    question_obj = await Question.objects.acreate(
+        question=question, answer=answer, bot=chatbot, prompt=prompt
+    )
     await sync_to_async(question_obj.context.set)(texts)

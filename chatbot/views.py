@@ -10,12 +10,11 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseBadRequest,
-    HttpResponseForbidden,
     JsonResponse,
 )
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
-from django_ratelimit.decorators import Ratelimited, ratelimit
+from django_ratelimit.decorators import ratelimit
 from pygments.formatters import HtmlFormatter
 
 from chatbot.completion import generate_completion
@@ -32,13 +31,12 @@ from core import rates
 
 
 @sync_to_async
-@ratelimit(key='user_or_ip', rate=rates.get_ratelimit)
+@ratelimit(key="user_or_ip", rate=rates.get_ratelimit)
 @csrf_exempt
 @async_to_sync
 async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
     """View to ask questions."""
-    chatbot: Optional[Chatbot] = await Chatbot.objects.filter(slug=slug
-                                                              ).afirst()
+    chatbot: Optional[Chatbot] = await Chatbot.objects.filter(slug=slug).afirst()
 
     if chatbot is None:
         raise Http404("Chatbot not found")
@@ -47,34 +45,47 @@ async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
         if sync_to_async(lambda: request.user.is_anonymous)():
             raise PermissionDenied("You need to log in to use this bot.")
 
-        if sync_to_async(lambda chatbot: request.user not in chatbot.users.all(
-        ))(chatbot):
+        if sync_to_async(lambda chatbot: request.user not in chatbot.users.all())(
+            chatbot
+        ):
             raise PermissionDenied("You are not allowed to use this bot.")
 
-    question = request.GET.get('question', None)
+    question = request.GET.get("question", None)
 
     if question is None:
         return HttpResponseBadRequest("You need to provide a question.")
+
+    question = question.strip()
 
     if await is_input_flagged(question, chatbot):
         return HttpResponse("The question was flagged as inappropriate", status=451)
 
     if existing_answer := await find_question(question, chatbot):
         answer = existing_answer.answer
-        text_list = [{
-            'id': text.id,
-            'content': text.content,
-            'url': text.url,
-            'page': text.page,
-        } async for text in existing_answer.context.filter(internal=False)]
 
-        return JsonResponse({
-            'answer': answer,
-            'texts': text_list,
-        })
+        text_list = [
+            {
+                "id": text.id,
+                "content": text.content,
+                "url": text.url,
+                "page": text.page,
+            }
+            async for text in existing_answer.context.filter(internal=False)
+        ]
+
+        existing_answer.count += 1
+        await sync_to_async(existing_answer.save)()
+
+        return JsonResponse(
+            {
+                "answer": answer,
+                "texts": text_list,
+            }
+        )
 
     texts = await find_texts(
-        question, await sync_to_async(lambda chatbot: chatbot.realm)(chatbot))
+        question, await sync_to_async(lambda chatbot: chatbot.realm)(chatbot)
+    )
 
     prompt = generate_prompt(question, texts, chatbot)
 
@@ -82,24 +93,32 @@ async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
 
     await store_question(question, answer, prompt, texts, chatbot)
 
-    text_list = [{
-        'id': text.id,
-        'content': text.content,
-        'url': text.url,
-        'page': text.page,
-    } for text in texts if not text.internal]
+    text_list = [
+        {
+            "id": text.pk,
+            "content": text.content,
+            "url": text.url,
+            "page": text.page,
+        }
+        for text in texts
+        if not text.internal
+    ]
 
-    return JsonResponse({
-        'answer': answer,
-        'texts': text_list,
-    })
+    return JsonResponse(
+        {
+            "answer": answer,
+            "texts": text_list,
+        }
+    )
 
 
 async def autocomplete_questions(request: HttpRequest) -> HttpResponse:
-    question = request.GET.get('q', '').strip()
-    return JsonResponse({
-        'data': await similair_questions(question),
-    })
+    question = request.GET.get("q", "").strip()
+    return JsonResponse(
+        {
+            "data": await similair_questions(question),
+        }
+    )
 
 
 @sync_to_async
@@ -112,18 +131,17 @@ async def bot_name(request: HttpRequest, slug: str) -> HttpResponse:
     if chatbot is None:
         raise Http404("Chatbot not found.")
 
-    return JsonResponse({'name': chatbot.name})
+    return JsonResponse({"name": chatbot.name})
 
 
 def readme(request: HttpRequest) -> HttpResponse:
     """Render the README.MD as index view."""
-    path = pathlib.Path(__file__).parent.resolve() / '../README.md'
+    path = pathlib.Path(__file__).parent.resolve() / "../README.md"
 
-    style = HtmlFormatter().get_style_defs('.codehilite')
+    style = HtmlFormatter().get_style_defs(".codehilite")
 
     with open(path) as fp:
-        content = markdown.markdown(fp.read(),
-                                    extensions=['fenced_code', 'codehilite'])
+        content = markdown.markdown(fp.read(), extensions=["fenced_code", "codehilite"])
 
     html = f"""<!doctype html>
 <html lang="en">

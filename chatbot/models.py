@@ -50,7 +50,6 @@ class Chatbot(models.Model):
 
 class Text(models.Model):
     """Text snippet from a website or pdf."""
-
     realm = models.ForeignKey(Realm, models.CASCADE)
 
     content = models.TextField()
@@ -84,6 +83,7 @@ class Question(models.Model):
     user = models.ForeignKey(get_user_model(), models.SET_NULL, blank=True, null=True)
 
     approved = models.BooleanField(default=False)
+    count = models.IntegerField(default=1)
 
     def __str__(self) -> str:
         """Represent as a string."""
