@@ -42,10 +42,10 @@ async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
         raise Http404("Chatbot not found")
 
     if not chatbot.public:
-        if sync_to_async(lambda: request.user.is_anonymous)():
+        if await sync_to_async(lambda: request.user.is_anonymous)():
             raise PermissionDenied("You need to log in to use this bot.")
 
-        if sync_to_async(lambda chatbot: request.user not in chatbot.users.all())(
+        if await sync_to_async(lambda chatbot: request.user not in chatbot.users.all())(
             chatbot
         ):
             raise PermissionDenied("You are not allowed to use this bot.")
