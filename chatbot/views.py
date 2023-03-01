@@ -55,7 +55,7 @@ async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
     if question is None:
         return HttpResponseBadRequest("You need to provide a question.")
 
-    question = question.strip()
+    question = question.strip()[:200]
 
     if await is_input_flagged(question, chatbot):
         return HttpResponse("The question was flagged as inappropriate", status=451)
