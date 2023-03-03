@@ -95,18 +95,13 @@ def _format_context(texts: List[Text], max_tokens: int) -> str:
     return result
 
 
-def generate_prompt(question: str, texts: List[Text], chatbot: Chatbot) -> str:
+def generate_prompt_context(question: str, texts: List[Text], chatbot: Chatbot) -> str:
     """Generate an answer to the question using the texts and the configuration of the chatbot."""
     prompt_length = count_tokens(chatbot.prompt_template) + count_tokens(question)
 
-    prompt = chatbot.prompt_template.format(
-        question=question,
-        context=_format_context(
-            texts, chatbot.model_max_tokens - prompt_length - chatbot.max_tokens
-        ),
+    return _format_context(
+        texts, chatbot.model_max_tokens - prompt_length - chatbot.max_tokens
     )
-
-    return prompt
 
 
 def index_realm(slug: str, batch_size: int = 10_000, monitor: bool = False) -> None:

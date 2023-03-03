@@ -22,7 +22,7 @@ from chatbot.models import Chatbot
 from chatbot.services import (
     find_question,
     find_texts,
-    generate_prompt,
+    generate_prompt_context,
     is_input_flagged,
     similair_questions,
     store_question,
@@ -87,11 +87,13 @@ async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
         question, await sync_to_async(lambda chatbot: chatbot.realm)(chatbot)
     )
 
-    prompt = generate_prompt(question, texts, chatbot)
+    context = generate_prompt_context(question, texts, chatbot)
 
-    answer = await generate_completion(prompt, chatbot)
+    answer = await generate_completion(
+        chatbot.prompt_template, context, question, chatbot
+    )
 
-    await store_question(question, answer, prompt, texts, chatbot)
+    await store_question(question, answer, chatbot.prompt_template, texts, chatbot)
 
     text_list = [
         {

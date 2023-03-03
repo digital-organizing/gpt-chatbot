@@ -15,23 +15,21 @@ async-timeout==4.0.2
     #   aiohttp
     #   redis
 asyncio-redis-rate-limit==0.2.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 attrs==22.2.0
     # via
     #   aiohttp
     #   pytest
 backoff==2.2.1
-    # via mv-mietzinsrechner-api (pyproject.toml)
-boto3==1.26.70
-    # via mv-mietzinsrechner-api (pyproject.toml)
-botocore==1.29.70
+    # via gpt-chatbot (pyproject.toml)
+boto3==1.26.83
+    # via gpt-chatbot (pyproject.toml)
+botocore==1.29.83
     # via
     #   boto3
     #   s3transfer
 brotli==1.0.9
     # via whitenoise
-celery-stubs==0.1.3
-    # via mv-mietzinsrechner-api (pyproject.toml)
 certifi==2022.12.7
     # via requests
 charset-normalizer==3.0.1
@@ -46,31 +44,22 @@ django==4.1.7
     #   django-model-utils
     #   django-sesame
     #   django-storages
-    #   django-stubs
     #   django-stubs-ext
-    #   mv-mietzinsrechner-api (pyproject.toml)
-django-cors-headers==3.13.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
-django-environ==0.9.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    #   gpt-chatbot (pyproject.toml)
+django-cors-headers==3.14.0
+    # via gpt-chatbot (pyproject.toml)
+django-environ==0.10.0
+    # via gpt-chatbot (pyproject.toml)
 django-model-utils==4.3.1
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 django-ratelimit==4.0.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 django-sesame[ua]==3.1
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 django-storages==1.13.2
-    # via mv-mietzinsrechner-api (pyproject.toml)
-django-stubs==1.14.0
-    # via
-    #   djangorestframework-stubs
-    #   mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 django-stubs-ext==0.7.0
-    # via
-    #   django-stubs
-    #   mv-mietzinsrechner-api (pyproject.toml)
-djangorestframework-stubs==1.8.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 exceptiongroup==1.1.0
     # via pytest
 filelock==3.9.0
@@ -81,17 +70,17 @@ frozenlist==1.3.3
     # via
     #   aiohttp
     #   aiosignal
-grpcio==1.47.2
+grpcio==1.47.5
     # via
     #   grpcio-tools
     #   pymilvus
-grpcio-tools==1.47.2
+grpcio-tools==1.47.5
     # via pymilvus
 gunicorn==20.1.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 h11==0.14.0
     # via uvicorn
-huggingface-hub==0.12.0
+huggingface-hub==0.12.1
     # via transformers
 idna==3.4
     # via
@@ -104,31 +93,24 @@ jmespath==1.0.1
     #   boto3
     #   botocore
 lxml==4.9.2
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 markdown==3.4.1
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 mmh3==3.0.0
     # via pymilvus
-more-itertools==9.0.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
+more-itertools==9.1.0
+    # via gpt-chatbot (pyproject.toml)
 multidict==6.0.4
     # via
     #   aiohttp
     #   yarl
-mypy==1.0.0
-    # via
-    #   celery-stubs
-    #   django-stubs
-    #   djangorestframework-stubs
-mypy-extensions==1.0.0
-    # via mypy
 numpy==1.24.2
     # via
-    #   mv-mietzinsrechner-api (pyproject.toml)
+    #   gpt-chatbot (pyproject.toml)
     #   pandas
     #   transformers
-openai==0.26.5
-    # via mv-mietzinsrechner-api (pyproject.toml)
+openai==0.27.0
+    # via gpt-chatbot (pyproject.toml)
 packaging==23.0
     # via
     #   huggingface-hub
@@ -136,24 +118,24 @@ packaging==23.0
     #   transformers
 pandas==1.5.3
     # via
-    #   mv-mietzinsrechner-api (pyproject.toml)
+    #   gpt-chatbot (pyproject.toml)
     #   pymilvus
 pillow==9.4.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 pluggy==1.0.0
     # via pytest
 protobuf==3.20.3
     # via grpcio-tools
 psycopg2-binary==2.9.5
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 pygments==2.14.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 pymemcache==4.0.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 pymilvus==2.2.2
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 pytest==7.2.1
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 python-dateutil==2.8.2
     # via
     #   botocore
@@ -165,12 +147,11 @@ pyyaml==6.0
     #   huggingface-hub
     #   transformers
 redis==4.5.1
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
 regex==2022.10.31
     # via transformers
 requests==2.28.2
     # via
-    #   djangorestframework-stubs
     #   huggingface-hub
     #   openai
     #   transformers
@@ -185,42 +166,19 @@ sqlparse==0.4.3
 tokenizers==0.13.2
     # via transformers
 tomli==2.0.1
-    # via
-    #   django-stubs
-    #   mypy
-    #   pytest
+    # via pytest
 tqdm==4.64.1
     # via
     #   huggingface-hub
     #   openai
     #   transformers
-tqdm-stubs==0.2.1
-    # via mv-mietzinsrechner-api (pyproject.toml)
 transformers==4.26.1
-    # via mv-mietzinsrechner-api (pyproject.toml)
-types-cachetools==5.3.0.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
-types-cryptography==3.3.23.2
-    # via mv-mietzinsrechner-api (pyproject.toml)
-types-pytz==2022.7.1.0
-    # via django-stubs
-types-pyyaml==6.0.12.6
-    # via
-    #   django-stubs
-    #   djangorestframework-stubs
-types-requests==2.28.11.12
-    # via djangorestframework-stubs
-types-urllib3==1.26.25.5
-    # via types-requests
-typing-extensions==4.4.0
+    # via gpt-chatbot (pyproject.toml)
+typing-extensions==4.5.0
     # via
     #   asyncio-redis-rate-limit
-    #   celery-stubs
-    #   django-stubs
     #   django-stubs-ext
-    #   djangorestframework-stubs
     #   huggingface-hub
-    #   mypy
 ua-parser==0.16.1
     # via django-sesame
 ujson==5.4.0
@@ -230,9 +188,9 @@ urllib3==1.26.14
     #   botocore
     #   requests
 uvicorn==0.20.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
-whitenoise[brotli]==6.3.0
-    # via mv-mietzinsrechner-api (pyproject.toml)
+    # via gpt-chatbot (pyproject.toml)
+whitenoise[brotli]==6.4.0
+    # via gpt-chatbot (pyproject.toml)
 yarl==1.8.2
     # via aiohttp
 

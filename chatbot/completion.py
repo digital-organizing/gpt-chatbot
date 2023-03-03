@@ -3,6 +3,7 @@ from typing import cast
 
 import backoff
 import openai
+import openai.error
 from asyncio_redis_rate_limit import RateLimiter, RateLimitError, RateSpec
 from redis.asyncio import Redis as AsyncRedis
 
@@ -12,21 +13,27 @@ from usage.services import astore_charge
 
 @backoff.on_exception(
     backoff.constant,
-    (RateLimitError, openai.error.RateLimitError),
+    (RateLimitError, openai.error.RateLimitError, openai.error.TryAgain),
     max_time=60,
     interval=8,
 )
-async def generate_completion(prompt: str, chatbot: Chatbot) -> str:
+async def generate_completion(
+    prompt: str, context: str, question: str, chatbot: Chatbot
+) -> str:
     """Generate completion using the prompt and settings from the chatbot."""
-    redis = AsyncRedis.from_url('redis://redis:6379')
+    redis = AsyncRedis.from_url("redis://redis:6379")
     async with RateLimiter(
-            unique_key='openai_completion',
-            rate_spec=RateSpec(requests=60, seconds=60),
-            backend=redis,
-            cache_prefix="openai_completion",
+        unique_key="openai_completion",
+        rate_spec=RateSpec(requests=60, seconds=60),
+        backend=redis,
+        cache_prefix="openai_completion",
     ):
-        response = await openai.Completion.acreate(
-            prompt=prompt,
+        response = await openai.ChatCompletion.acreate(
+            messages=[
+                {"role": "system", "content": prompt},
+                {"role": "system", "content": context},
+                {"role": "user", "content": question},
+            ],
             api_key=chatbot.openai_key,
             model=chatbot.model,
             max_tokens=chatbot.max_tokens,
@@ -38,4 +45,4 @@ async def generate_completion(prompt: str, chatbot: Chatbot) -> str:
 
     await astore_charge(chatbot.openai_org, response)
 
-    return cast(str, response['choices'][0]['text'])
+    return cast(str, response["choices"][0]["message"]["content"])
