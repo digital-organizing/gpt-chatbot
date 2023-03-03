@@ -19,17 +19,12 @@ GPT is excellent at writing answers that appear reasonably correct, but the accu
 To find relevant answers, we use embeddings. Beforehand, an embedding is generated for each text in the database. After receiving a question, an embedding for the question is generated and around 10 similar texts (the number depends on the length of the texts) are retrieved from the database. These text snippets are combined with the question and sent to GPT to generate an answer. To do this, you need to specify a prompt template like the following:
 
 ``` text
-Answer the following question using the context provided below:
-
-Question: {question}
-
-Context: 
-{context}
-
-Answer:
+Answer the following question using the provided context.
 ```
 
 You can add more instructions to your prompt, such as the formality, length, or language of the answer. However, the more instructions you provide, the less capacity GPT will have for generating answers and adding context.
+
+The answer is generated using OpenAIs new ChatGPT endpoint, which allows to seperate user input from system commands.
 
 ## How to Train Your Own Chatbot
 
