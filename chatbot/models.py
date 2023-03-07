@@ -27,7 +27,7 @@ class Chatbot(models.Model):
 
     prompt_template = models.TextField()
 
-    model = models.CharField(max_length=200, default='text-davinci-003')
+    model = models.CharField(max_length=200, default="gpt-3.5-turbo")
     model_max_tokens = models.IntegerField(default=4096)
 
     max_tokens = models.IntegerField(default=720)
@@ -42,6 +42,7 @@ class Chatbot(models.Model):
     users = models.ManyToManyField(get_user_model())
 
     public = models.BooleanField(default=False)
+    restricted = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         """Represent as a string."""
@@ -50,6 +51,7 @@ class Chatbot(models.Model):
 
 class Text(models.Model):
     """Text snippet from a website or pdf."""
+
     realm = models.ForeignKey(Realm, models.CASCADE)
 
     content = models.TextField()
@@ -66,7 +68,7 @@ class Text(models.Model):
         return self.content
 
     class Meta:
-        verbose_name = 'Text'
+        verbose_name = "Text"
 
 
 class Question(models.Model):

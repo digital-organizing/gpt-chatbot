@@ -43,6 +43,9 @@ async def similair_questions(question: str):
 
 
 async def is_input_flagged(text: str, bot: Chatbot) -> bool:
+    if not bot.restricted:
+        return False
+
     response = await openai.Moderation.acreate(
         input=text,
         api_key=bot.openai_key,
