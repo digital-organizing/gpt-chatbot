@@ -83,11 +83,15 @@ async def bot_endpoint(request: HttpRequest, slug: str) -> HttpResponse:
             }
         )
 
-    texts = await find_texts(
-        question, await sync_to_async(lambda chatbot: chatbot.realm)(chatbot)
-    )
+    if chatbot.skip_context:
+        texts = []
+        context = ""
+    else:
+        texts = await find_texts(
+            question, await sync_to_async(lambda chatbot: chatbot.realm)(chatbot)
+        )
 
-    context = generate_prompt_context(question, texts, chatbot)
+        context = generate_prompt_context(question, texts, chatbot)
 
     answer = await generate_completion(
         chatbot.prompt_template, context, question, chatbot

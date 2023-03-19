@@ -44,6 +44,8 @@ class Chatbot(models.Model):
     public = models.BooleanField(default=False)
     restricted = models.BooleanField(default=True)
 
+    skip_context = models.BooleanField(default=False)
+
     def __str__(self) -> str:
         """Represent as a string."""
         return self.slug

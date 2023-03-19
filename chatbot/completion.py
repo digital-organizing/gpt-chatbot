@@ -28,12 +28,16 @@ async def generate_completion(
         backend=redis,
         cache_prefix="openai_completion",
     ):
+        messages = [
+            {"role": "system", "content": prompt},
+        ]
+
+        if not chatbot.skip_context:
+            messages.append({"role": "system", "content": context})
+
+        messages.append({"role": "user", "content": question})
         response = await openai.ChatCompletion.acreate(
-            messages=[
-                {"role": "system", "content": prompt},
-                {"role": "system", "content": context},
-                {"role": "user", "content": question},
-            ],
+            messages=messages,
             api_key=chatbot.openai_key,
             model=chatbot.model,
             max_tokens=chatbot.max_tokens,
