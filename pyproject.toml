@@ -13,6 +13,7 @@ dependencies = [
   "django-sesame[ua]",
   "django-stubs-ext",
   "django-storages",
+  "django-import-export",
   "uvicorn",
   "boto3",
   "gunicorn",

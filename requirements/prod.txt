@@ -20,9 +20,9 @@ attrs==22.2.0
     # via aiohttp
 backoff==2.2.1
     # via gpt-chatbot (pyproject.toml)
-boto3==1.26.83
+boto3==1.26.95
     # via gpt-chatbot (pyproject.toml)
-botocore==1.29.83
+botocore==1.29.95
     # via
     #   boto3
     #   s3transfer
@@ -30,15 +30,20 @@ brotli==1.0.9
     # via whitenoise
 certifi==2022.12.7
     # via requests
-charset-normalizer==3.0.1
+charset-normalizer==3.1.0
     # via
     #   aiohttp
     #   requests
 click==8.1.3
     # via uvicorn
+defusedxml==0.7.1
+    # via odfpy
+diff-match-patch==20200713
+    # via django-import-export
 django==4.1.7
     # via
     #   django-cors-headers
+    #   django-import-export
     #   django-model-utils
     #   django-sesame
     #   django-storages
@@ -48,6 +53,8 @@ django-cors-headers==3.14.0
     # via gpt-chatbot (pyproject.toml)
 django-environ==0.10.0
     # via gpt-chatbot (pyproject.toml)
+django-import-export==3.1.0
+    # via gpt-chatbot (pyproject.toml)
 django-model-utils==4.3.1
     # via gpt-chatbot (pyproject.toml)
 django-ratelimit==4.0.0
@@ -56,9 +63,11 @@ django-sesame[ua]==3.1
     # via gpt-chatbot (pyproject.toml)
 django-storages==1.13.2
     # via gpt-chatbot (pyproject.toml)
-django-stubs-ext==0.7.0
+django-stubs-ext==0.8.0
     # via gpt-chatbot (pyproject.toml)
-filelock==3.9.0
+et-xmlfile==1.1.0
+    # via openpyxl
+filelock==3.10.0
     # via
     #   huggingface-hub
     #   transformers
@@ -76,7 +85,7 @@ gunicorn==20.1.0
     # via gpt-chatbot (pyproject.toml)
 h11==0.14.0
     # via uvicorn
-huggingface-hub==0.12.1
+huggingface-hub==0.13.3
     # via transformers
 idna==3.4
     # via
@@ -90,6 +99,8 @@ lxml==4.9.2
     # via gpt-chatbot (pyproject.toml)
 markdown==3.4.1
     # via gpt-chatbot (pyproject.toml)
+markuppy==1.14
+    # via tablib
 mmh3==3.0.0
     # via pymilvus
 more-itertools==9.1.0
@@ -103,8 +114,12 @@ numpy==1.24.2
     #   gpt-chatbot (pyproject.toml)
     #   pandas
     #   transformers
-openai==0.27.0
+odfpy==1.4.1
+    # via tablib
+openai==0.27.2
     # via gpt-chatbot (pyproject.toml)
+openpyxl==3.1.2
+    # via tablib
 packaging==23.0
     # via
     #   huggingface-hub
@@ -123,7 +138,7 @@ pygments==2.14.0
     # via gpt-chatbot (pyproject.toml)
 pymemcache==4.0.0
     # via gpt-chatbot (pyproject.toml)
-pymilvus==2.2.2
+pymilvus==2.2.3
     # via gpt-chatbot (pyproject.toml)
 python-dateutil==2.8.2
     # via
@@ -134,8 +149,9 @@ pytz==2022.7.1
 pyyaml==6.0
     # via
     #   huggingface-hub
+    #   tablib
     #   transformers
-redis==4.5.1
+redis==4.5.2
     # via gpt-chatbot (pyproject.toml)
 regex==2022.10.31
     # via transformers
@@ -152,14 +168,16 @@ six==1.16.0
     #   python-dateutil
 sqlparse==0.4.3
     # via django
+tablib[html,ods,xls,xlsx,yaml]==3.3.0
+    # via django-import-export
 tokenizers==0.13.2
     # via transformers
-tqdm==4.64.1
+tqdm==4.65.0
     # via
     #   huggingface-hub
     #   openai
     #   transformers
-transformers==4.26.1
+transformers==4.27.2
     # via gpt-chatbot (pyproject.toml)
 typing-extensions==4.5.0
     # via
@@ -170,14 +188,18 @@ ua-parser==0.16.1
     # via django-sesame
 ujson==5.4.0
     # via pymilvus
-urllib3==1.26.14
+urllib3==1.26.15
     # via
     #   botocore
     #   requests
-uvicorn==0.20.0
+uvicorn==0.21.1
     # via gpt-chatbot (pyproject.toml)
 whitenoise[brotli]==6.4.0
     # via gpt-chatbot (pyproject.toml)
+xlrd==2.0.1
+    # via tablib
+xlwt==1.3.0
+    # via tablib
 yarl==1.8.2
     # via aiohttp
 
