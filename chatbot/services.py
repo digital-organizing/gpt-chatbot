@@ -186,7 +186,6 @@ class QuestionGlobalFilter(DatatablesFilterSet):
     """Filter name, artist and genre by name with icontains"""
 
     question = GlobalCharFilter()
-    answer = GlobalCharFilter()
 
     class Meta:
         model = Question
