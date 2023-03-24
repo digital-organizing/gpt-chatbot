@@ -190,7 +190,7 @@ class QuestionGlobalFilter(DatatablesFilterSet):
 
     class Meta:
         model = Question
-        fields = ["question", "answer"]
+        fields = ["question", "count"]
 
 
 class QuestionGlobalViewSet(viewsets.ModelViewSet):
