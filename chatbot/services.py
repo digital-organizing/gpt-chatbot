@@ -3,6 +3,15 @@ from typing import List, Optional, Tuple
 
 import openai
 from asgiref.sync import sync_to_async
+from django_filters import filters
+from rest_framework import viewsets
+from rest_framework_datatables.django_filters.backends import (
+    DatatablesFilterBackend,
+)
+from rest_framework_datatables.django_filters.filters import GlobalFilter
+from rest_framework_datatables.django_filters.filterset import (
+    DatatablesFilterSet,
+)
 from tqdm import tqdm
 
 from chatbot.collections import (
@@ -15,6 +24,7 @@ from chatbot.collections import (
 )
 from chatbot.embeddings import batch_embedding, count_tokens, single_embedding
 from chatbot.models import Chatbot, Question, Realm, Text
+from chatbot.serializers import QuestionSerializer
 
 
 def get_distance(entry: Tuple[float, Text]) -> float:
@@ -37,7 +47,6 @@ async def similair_questions(question: str):
             flat=True,
         )[:10]
     )
-    print(await query.acount())
 
     return [question async for question in query]
 
@@ -167,3 +176,31 @@ async def store_question(
         question=question, answer=answer, bot=chatbot, prompt=prompt
     )
     await sync_to_async(question_obj.context.set)(texts)
+
+
+class GlobalCharFilter(GlobalFilter, filters.CharFilter):
+    pass
+
+
+class QuestionGlobalFilter(DatatablesFilterSet):
+    """Filter name, artist and genre by name with icontains"""
+
+    question = GlobalCharFilter()
+    answer = GlobalCharFilter()
+
+    class Meta:
+        model = Question
+        fields = ["question", "answer"]
+
+
+class QuestionGlobalViewSet(viewsets.ModelViewSet):
+    serializer_class = QuestionSerializer
+    filter_backends = (DatatablesFilterBackend,)
+    filterset_class = QuestionGlobalFilter
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the purchases for
+        the user as determined by the username portion of the URL.
+        """
+        return Question.objects.filter(bot__slug=self.kwargs["slug"], count__gte=5)

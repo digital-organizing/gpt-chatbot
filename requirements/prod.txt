@@ -20,9 +20,9 @@ attrs==22.2.0
     # via aiohttp
 backoff==2.2.1
     # via gpt-chatbot (pyproject.toml)
-boto3==1.26.95
+boto3==1.26.98
     # via gpt-chatbot (pyproject.toml)
-botocore==1.29.95
+botocore==1.29.98
     # via
     #   boto3
     #   s3transfer
@@ -43,15 +43,19 @@ diff-match-patch==20200713
 django==4.1.7
     # via
     #   django-cors-headers
+    #   django-filter
     #   django-import-export
     #   django-model-utils
     #   django-sesame
     #   django-storages
     #   django-stubs-ext
+    #   djangorestframework
     #   gpt-chatbot (pyproject.toml)
 django-cors-headers==3.14.0
     # via gpt-chatbot (pyproject.toml)
 django-environ==0.10.0
+    # via gpt-chatbot (pyproject.toml)
+django-filter==22.1
     # via gpt-chatbot (pyproject.toml)
 django-import-export==3.1.0
     # via gpt-chatbot (pyproject.toml)
@@ -65,9 +69,15 @@ django-storages==1.13.2
     # via gpt-chatbot (pyproject.toml)
 django-stubs-ext==0.8.0
     # via gpt-chatbot (pyproject.toml)
+djangorestframework==3.14.0
+    # via
+    #   djangorestframework-datatables
+    #   gpt-chatbot (pyproject.toml)
+djangorestframework-datatables==0.7.0
+    # via gpt-chatbot (pyproject.toml)
 et-xmlfile==1.1.0
     # via openpyxl
-filelock==3.10.0
+filelock==3.10.3
     # via
     #   huggingface-hub
     #   transformers
@@ -97,7 +107,7 @@ jmespath==1.0.1
     #   botocore
 lxml==4.9.2
     # via gpt-chatbot (pyproject.toml)
-markdown==3.4.1
+markdown==3.4.3
     # via gpt-chatbot (pyproject.toml)
 markuppy==1.14
     # via tablib
@@ -145,15 +155,18 @@ python-dateutil==2.8.2
     #   botocore
     #   pandas
 pytz==2022.7.1
-    # via pandas
+    # via
+    #   djangorestframework
+    #   djangorestframework-datatables
+    #   pandas
 pyyaml==6.0
     # via
     #   huggingface-hub
     #   tablib
     #   transformers
-redis==4.5.2
+redis==4.5.3
     # via gpt-chatbot (pyproject.toml)
-regex==2022.10.31
+regex==2023.3.23
     # via transformers
 requests==2.28.2
     # via
@@ -168,7 +181,7 @@ six==1.16.0
     #   python-dateutil
 sqlparse==0.4.3
     # via django
-tablib[html,ods,xls,xlsx,yaml]==3.3.0
+tablib[html,ods,xls,xlsx,yaml]==3.4.0
     # via django-import-export
 tokenizers==0.13.2
     # via transformers
@@ -177,7 +190,7 @@ tqdm==4.65.0
     #   huggingface-hub
     #   openai
     #   transformers
-transformers==4.27.2
+transformers==4.27.3
     # via gpt-chatbot (pyproject.toml)
 typing-extensions==4.5.0
     # via
