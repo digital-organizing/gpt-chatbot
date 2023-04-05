@@ -45,7 +45,9 @@ class ChatbotAdmin(RestrictedAdminMixin, admin.ModelAdmin):
     list_filter = ["realm"]
 
     def get_form(self, request: Any, *args, **kwargs: Any) -> Any:
-        if not request.user.is_superuser:
+        if request.user.is_superuser:
+            self.exclude = []
+        else:
             self.exclude = [
                 "openai_key",
                 "realm",
